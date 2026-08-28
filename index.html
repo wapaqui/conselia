@@ -112,11 +112,14 @@
             </nav>
 
             <!-- Quick Action & Mobile Menu Toggle -->
-            <div class="flex items-center space-x-3">
-                <button onclick="openSettingsModal()" title="Configuración de API Key" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition">
-                    <i class="fa-solid fa-gear"></i>
+            <div class="flex items-center space-x-2 sm:space-x-3">
+                <!-- Botón de Configuración / Engranaje Destacado -->
+                <button onclick="openSettingsModal()" title="Configuración de API Key" class="px-3 py-1.5 rounded-xl bg-slate-800/90 hover:bg-slate-700 text-brand-400 hover:text-white transition flex items-center space-x-2 border border-brand-500/30 shadow-md group">
+                    <i class="fa-solid fa-gear text-sm text-brand-400 group-hover:rotate-90 transition-transform duration-300"></i>
+                    <span class="text-xs font-semibold text-slate-100">API Key</span>
                 </button>
-                <button onclick="openDailyTipModal()" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-brand-500/10 border border-brand-500/30 text-brand-400 hover:bg-brand-500/20 transition flex items-center space-x-1.5">
+
+                <button onclick="openDailyTipModal()" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-brand-500/10 border border-brand-500/30 text-brand-400 hover:bg-brand-500/20 transition flex items-center space-x-1.5">
                     <i class="fa-solid fa-bolt text-yellow-400 animate-pulse"></i>
                     <span class="hidden sm:inline">Consejo Flash</span>
                 </button>
@@ -128,8 +131,8 @@
 
         <!-- Mobile Navigation Drawer -->
         <div id="mobile-menu" class="hidden md:hidden border-t border-slate-800 bg-slate-900 px-4 pt-2 pb-4 space-y-2">
-            <button onclick="openSettingsModal()" class="w-full text-left px-3 py-2 rounded-lg text-slate-200 hover:bg-slate-800 flex items-center space-x-3">
-                <i class="fa-solid fa-gear text-slate-400 w-5"></i><span>Configurar API Key</span>
+            <button onclick="openSettingsModal()" class="w-full text-left px-3 py-2 rounded-lg text-brand-400 bg-brand-500/10 hover:bg-slate-800 flex items-center space-x-3 border border-brand-500/20">
+                <i class="fa-solid fa-gear text-brand-400 w-5"></i><span class="font-semibold text-sm">Configurar API Key</span>
             </button>
             <button onclick="switchTab('explore')" class="w-full text-left px-3 py-2 rounded-lg text-slate-200 hover:bg-slate-800 flex items-center space-x-3">
                 <i class="fa-solid fa-lightbulb text-amber-400 w-5"></i><span>Obtener Consejo</span>

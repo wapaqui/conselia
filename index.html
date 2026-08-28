@@ -1,0 +1,1038 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full bg-slate-900 text-slate-100">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conselia - Tu Asesor Personal e Inspirador</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            800: '#166534',
+                            900: '#14532d',
+                        },
+                        accent: {
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Marked.js for Rendering Markdown -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        /* Custom scrollbars & smooth transitions */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #4ade80 0%, #3b82f6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+</head>
+<body class="h-full flex flex-col font-sans bg-slate-950 text-slate-100 antialiased selection:bg-brand-500 selection:text-white">
+
+    <!-- Top Navigation Bar -->
+    <header class="sticky top-0 z-40 border-b border-slate-800 bg-slate-900/80 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <!-- Brand Logo -->
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('explore')">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-500 to-accent-600 flex items-center justify-center shadow-lg shadow-brand-500/20">
+                    <i class="fa-solid fa-compass text-slate-950 text-xl"></i>
+                </div>
+                <div>
+                    <span class="text-xl font-bold tracking-tight text-white">Conselia</span>
+                    <span class="text-xs text-brand-500 font-medium block -mt-1">Guía & Consejos IA</span>
+                </div>
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="hidden md:flex items-center space-x-1">
+                <button onclick="switchTab('explore')" id="nav-explore" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium transition flex items-center space-x-2 text-white bg-slate-800">
+                    <i class="fa-solid fa-lightbulb text-amber-400"></i>
+                    <span>Obtener Consejo</span>
+                </button>
+                <button onclick="switchTab('chat')" id="nav-chat" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/60 transition flex items-center space-x-2">
+                    <i class="fa-solid fa-comments text-accent-500"></i>
+                    <span>Mentor Virtual</span>
+                </button>
+                <button onclick="switchTab('matrix')" id="nav-matrix" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/60 transition flex items-center space-x-2">
+                    <i class="fa-solid fa-scale-balanced text-emerald-400"></i>
+                    <span>Matriz de Decisiones</span>
+                </button>
+                <button onclick="switchTab('card-gen')" id="nav-card-gen" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/60 transition flex items-center space-x-2">
+                    <i class="fa-solid fa-image text-pink-400"></i>
+                    <span>Tarjeta Inspiracional</span>
+                </button>
+                <button onclick="switchTab('saved')" id="nav-saved" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/60 transition flex items-center space-x-2">
+                    <i class="fa-solid fa-bookmark text-yellow-500"></i>
+                    <span>Guardados</span>
+                    <span id="saved-count" class="ml-1 px-1.5 py-0.5 text-xs bg-slate-700 text-slate-300 rounded-full">0</span>
+                </button>
+            </nav>
+
+            <!-- Quick Action & Mobile Menu Toggle -->
+            <div class="flex items-center space-x-3">
+                <button onclick="openDailyTipModal()" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-brand-500/10 border border-brand-500/30 text-brand-400 hover:bg-brand-500/20 transition flex items-center space-x-1.5">
+                    <i class="fa-solid fa-bolt text-yellow-400 animate-pulse"></i>
+                    <span class="hidden sm:inline">Consejo Flash</span>
+                </button>
+                <button onclick="toggleMobileMenu()" class="md:hidden p-2 text-slate-400 hover:text-white">
+                    <i class="fa-solid fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation Drawer -->
+        <div id="mobile-menu" class="hidden md:hidden border-t border-slate-800 bg-slate-900 px-4 pt-2 pb-4 space-y-2">
+            <button onclick="switchTab('explore')" class="w-full text-left px-3 py-2 rounded-lg text-slate-200 hover:bg-slate-800 flex items-center space-x-3">
+                <i class="fa-solid fa-lightbulb text-amber-400 w-5"></i><span>Obtener Consejo</span>
+            </button>
+            <button onclick="switchTab('chat')" class="w-full text-left px-3 py-2 rounded-lg text-slate-200 hover:bg-slate-800 flex items-center space-x-3">
+                <i class="fa-solid fa-comments text-accent-500 w-5"></i><span>Mentor Virtual</span>
+            </button>
+            <button onclick="switchTab('matrix')" class="w-full text-left px-3 py-2 rounded-lg text-slate-200 hover:bg-slate-800 flex items-center space-x-3">
+                <i class="fa-solid fa-scale-balanced text-emerald-400 w-5"></i><span>Matriz de Decisiones</span>
+            </button>
+            <button onclick="switchTab('card-gen')" class="w-full text-left px-3 py-2 rounded-lg text-slate-200 hover:bg-slate-800 flex items-center space-x-3">
+                <i class="fa-solid fa-image text-pink-400 w-5"></i><span>Tarjeta Inspiracional</span>
+            </button>
+            <button onclick="switchTab('saved')" class="w-full text-left px-3 py-2 rounded-lg text-slate-200 hover:bg-slate-800 flex items-center space-x-3">
+                <i class="fa-solid fa-bookmark text-yellow-500 w-5"></i><span>Mis Consejos Guardados</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 space-y-8">
+
+        <!-- Notification / Toast Bar -->
+        <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
+            <div class="glass-card px-4 py-3 rounded-xl shadow-2xl flex items-center space-x-3 border-l-4 border-brand-500 text-sm font-medium">
+                <i id="toast-icon" class="fa-solid fa-circle-check text-brand-400 text-lg"></i>
+                <span id="toast-msg">Notificación</span>
+            </div>
+        </div>
+
+        <!-- ==================== TAB 1: EXPLORADOR DE CONSEJOS ==================== -->
+        <section id="tab-explore" class="tab-content space-y-8">
+            <!-- Hero Banner -->
+            <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 border border-slate-800 p-6 sm:p-10">
+                <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-brand-500/10 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="absolute -left-10 -top-10 w-64 h-64 bg-accent-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+                <div class="max-w-3xl space-y-4 relative z-10">
+                    <span class="inline-flex items-center space-x-2 px-3 py-1 rounded-full text-xs font-semibold bg-brand-500/10 text-brand-400 border border-brand-500/20">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i>
+                        <span>Sabiduría en Tiempo Real</span>
+                    </span>
+                    <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight text-white leading-tight">
+                        Encuentra el <span class="gradient-text">consejo perfecto</span> para cada momento de tu vida.
+                    </h1>
+                    <p class="text-slate-400 text-base sm:text-lg">
+                        Cuéntale a tu consejero virtual qué inquietud o meta tienes. Recibirás un plan de acción estructurado, perspectiva empática y pasos claros.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Form & Controls Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <!-- Advice Generator Input Form -->
+                <div class="lg:col-span-5 glass-card rounded-2xl p-6 space-y-5 border border-slate-800">
+                    <h2 class="text-lg font-bold text-white flex items-center space-x-2">
+                        <i class="fa-solid fa-sliders text-brand-400"></i>
+                        <span>Configura tu Consulta</span>
+                    </h2>
+
+                    <!-- Category Selector -->
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Categoría</label>
+                        <div class="grid grid-cols-3 gap-2" id="category-grid">
+                            <!-- Populated dynamically via JS -->
+                        </div>
+                    </div>
+
+                    <!-- Situation Input -->
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Tu Situación o Pregunta</label>
+                        <textarea id="user-situation" rows="4" placeholder="Ej: Me cuesta organizarme para estudiar y trabajar a la vez. ¿Cómo mantengo el enfoque sin agotarme?" class="w-full bg-slate-900 border border-slate-700/80 rounded-xl p-3 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition"></textarea>
+                    </div>
+
+                    <!-- Tone Selection -->
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Tono del Consejo</label>
+                        <select id="advice-tone" class="w-full bg-slate-900 border border-slate-700/80 rounded-xl p-3 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                            <option value="Empático y Comprensivo">Empático y Cerca</option>
+                            <option value="Directo y Práctico" selected>Directo y Práctico</option>
+                            <option value="Motivador e Inspirador">Motivador e Inspirador</option>
+                            <option value="Filosófico y Reflexivo">Filosófico y Profundo</option>
+                            <option value="Estratégico de Negocios">Estratégico y Profesional</option>
+                        </select>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button onclick="generateAdvice()" id="btn-generate-advice" class="w-full py-3.5 px-4 bg-gradient-to-r from-brand-600 to-brand-500 hover:from-brand-500 hover:to-brand-400 text-slate-950 font-bold rounded-xl shadow-lg shadow-brand-500/25 transition flex items-center justify-center space-x-2 group">
+                        <i class="fa-solid fa-sparkles text-slate-950 group-hover:rotate-12 transition transform"></i>
+                        <span>Generar Consejo Personalizado</span>
+                    </button>
+                </div>
+
+                <!-- Advice Output Display -->
+                <div class="lg:col-span-7 glass-card rounded-2xl p-6 border border-slate-800 flex flex-col min-h-[450px]">
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-4 mb-4">
+                        <div class="flex items-center space-x-2">
+                            <i class="fa-solid fa-shield-heart text-brand-400 text-xl"></i>
+                            <h3 class="font-bold text-white text-lg">Tu Consejo</h3>
+                        </div>
+                        <div id="advice-actions" class="hidden flex items-center space-x-2">
+                            <button onclick="speakAdvice()" title="Escuchar Consejo" class="p-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-slate-300 hover:text-white transition">
+                                <i class="fa-solid fa-volume-high"></i>
+                            </button>
+                            <button onclick="copyAdviceText()" title="Copiar al portapapeles" class="p-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-slate-300 hover:text-white transition">
+                                <i class="fa-solid fa-copy"></i>
+                            </button>
+                            <button onclick="saveCurrentAdvice()" id="btn-bookmark" title="Guardar Consejo" class="p-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-slate-300 hover:text-yellow-400 transition">
+                                <i class="fa-regular fa-bookmark"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Output Box -->
+                    <div id="advice-output-container" class="flex-1 flex flex-col justify-center items-center text-center p-6 space-y-4">
+                        <div class="w-16 h-16 rounded-full bg-slate-800/80 flex items-center justify-center text-slate-500 mb-2">
+                            <i class="fa-solid fa-feather-pointed text-2xl"></i>
+                        </div>
+                        <p class="text-slate-400 text-sm max-w-md">
+                            Selecciona un área, redacta tu caso o inquietud y presiona <strong>"Generar Consejo Personalizado"</strong> para recibir orientación estructurada.
+                        </p>
+                    </div>
+
+                    <!-- Loading State Indicator -->
+                    <div id="advice-loading" class="hidden flex-1 flex flex-col justify-center items-center p-8 space-y-4">
+                        <div class="relative w-12 h-12">
+                            <div class="absolute top-0 left-0 w-full h-full border-4 border-brand-500/20 rounded-full"></div>
+                            <div class="absolute top-0 left-0 w-full h-full border-4 border-brand-500 rounded-full animate-spin border-t-transparent"></div>
+                        </div>
+                        <p class="text-slate-300 text-sm font-medium animate-pulse">Consultando sabiduría y analizando tu situación...</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== TAB 2: MENTOR VIRTUAL (CHAT) ==================== -->
+        <section id="tab-chat" class="tab-content hidden space-y-6">
+            <div class="glass-card rounded-2xl border border-slate-800 flex flex-col h-[75vh]">
+                <!-- Chat Header -->
+                <div class="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-900/50">
+                    <div class="flex items-center space-x-3">
+                        <div class="relative">
+                            <div class="w-10 h-10 rounded-full bg-accent-600 flex items-center justify-center text-white font-bold">
+                                <i class="fa-solid fa-robot"></i>
+                            </div>
+                            <span class="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 rounded-full border-2 border-slate-900"></span>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-white text-base">Mentor Virtual Conselia</h3>
+                            <p class="text-xs text-slate-400">Conversación continua para resolver dilemas paso a paso</p>
+                        </div>
+                    </div>
+                    <button onclick="clearChatHistory()" class="text-xs px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg transition flex items-center space-x-1">
+                        <i class="fa-solid fa-rotate-right"></i>
+                        <span>Reiniciar Conversación</span>
+                    </button>
+                </div>
+
+                <!-- Chat Messages Stream -->
+                <div id="chat-messages" class="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4">
+                    <!-- Initial Welcome Message -->
+                    <div class="flex items-start space-x-3">
+                        <div class="w-8 h-8 rounded-full bg-accent-600 flex items-center justify-center text-white text-xs shrink-0">
+                            <i class="fa-solid fa-robot"></i>
+                        </div>
+                        <div class="bg-slate-800/90 rounded-2xl rounded-tl-none p-4 max-w-2xl text-sm text-slate-200 border border-slate-700/50 shadow-sm">
+                            <p class="font-medium text-brand-400 mb-1">¡Hola! Soy tu Mentor Personal.</p>
+                            <p>Estoy aquí para escucharte y guiarte. Cuéntame qué está pasando por tu mente hoy o sobre qué tema necesitas una segunda opinión imparcial.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chat Input Controls -->
+                <div class="p-4 border-t border-slate-800 bg-slate-900/50">
+                    <form onsubmit="sendChatMessage(event)" class="flex items-center space-x-2">
+                        <input type="text" id="chat-input" placeholder="Escribe tu mensaje o dilema aquí..." class="flex-1 bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-accent-500">
+                        <button type="submit" id="btn-send-chat" class="px-5 py-3 bg-accent-600 hover:bg-accent-500 text-white font-semibold rounded-xl transition flex items-center space-x-2 shrink-0">
+                            <span>Enviar</span>
+                            <i class="fa-solid fa-paper-plane"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== TAB 3: MATRIZ DE DECISIONES ==================== -->
+        <section id="tab-matrix" class="tab-content hidden space-y-6">
+            <div class="glass-card rounded-2xl p-6 border border-slate-800 space-y-6">
+                <div>
+                    <h2 class="text-2xl font-bold text-white flex items-center space-x-2">
+                        <i class="fa-solid fa-scale-balanced text-emerald-400"></i>
+                        <span>Matriz Evaluadora de Decisiones</span>
+                    </h2>
+                    <p class="text-slate-400 text-sm mt-1">¿Tienes que elegir entre 2 o más opciones? Ingresa tus alternativas y los pros/contras de cada una. La IA evaluará los riesgos y te dará un dictamen analítico.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="decision-options-container">
+                    <!-- Option A -->
+                    <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold uppercase tracking-wider text-emerald-400">Opción 1</span>
+                        </div>
+                        <input type="text" id="opt-1-title" placeholder="Ej: Aceptar la oferta de empleo A" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-sm font-semibold text-slate-100 focus:outline-none focus:border-emerald-500">
+                        <textarea id="opt-1-pros" rows="2" placeholder="Pros (ventajas)..." class="w-full bg-slate-950/60 border border-slate-800/80 rounded-xl p-2.5 text-xs text-slate-300 focus:outline-none focus:border-emerald-500"></textarea>
+                        <textarea id="opt-1-cons" rows="2" placeholder="Contras (riesgos / desventajas)..." class="w-full bg-slate-950/60 border border-slate-800/80 rounded-xl p-2.5 text-xs text-slate-300 focus:outline-none focus:border-red-500"></textarea>
+                    </div>
+
+                    <!-- Option B -->
+                    <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold uppercase tracking-wider text-accent-500">Opción 2</span>
+                        </div>
+                        <input type="text" id="opt-2-title" placeholder="Ej: Quedarme en mi puesto actual" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-sm font-semibold text-slate-100 focus:outline-none focus:border-accent-500">
+                        <textarea id="opt-2-pros" rows="2" placeholder="Pros (ventajas)..." class="w-full bg-slate-950/60 border border-slate-800/80 rounded-xl p-2.5 text-xs text-slate-300 focus:outline-none focus:border-accent-500"></textarea>
+                        <textarea id="opt-2-cons" rows="2" placeholder="Contras (riesgos / desventajas)..." class="w-full bg-slate-950/60 border border-slate-800/80 rounded-xl p-2.5 text-xs text-slate-300 focus:outline-none focus:border-red-500"></textarea>
+                    </div>
+                </div>
+
+                <div class="flex justify-center">
+                    <button onclick="evaluateDecisionMatrix()" id="btn-eval-matrix" class="px-8 py-3 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-slate-950 font-bold rounded-xl shadow-lg transition flex items-center space-x-2">
+                        <i class="fa-solid fa-calculator"></i>
+                        <span>Evaluar Dilema con IA</span>
+                    </button>
+                </div>
+
+                <!-- Matrix Result Display -->
+                <div id="matrix-result" class="hidden bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
+                    <h3 class="text-lg font-bold text-white flex items-center space-x-2">
+                        <i class="fa-solid fa-chart-pie text-emerald-400"></i>
+                        <span>Dictamen y Recomendación</span>
+                    </h3>
+                    <div id="matrix-result-content" class="text-sm text-slate-300 leading-relaxed space-y-3"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== TAB 4: TARJETAS INSPIRACIONALES ==================== -->
+        <section id="tab-card-gen" class="tab-content hidden space-y-6">
+            <div class="glass-card rounded-2xl p-6 border border-slate-800 space-y-6">
+                <div>
+                    <h2 class="text-2xl font-bold text-white flex items-center space-x-2">
+                        <i class="fa-solid fa-image text-pink-400"></i>
+                        <span>Generador de Tarjetas Ilustradas</span>
+                    </h2>
+                    <p class="text-slate-400 text-sm mt-1">Crea una imagen artística e inspiracional basada en un consejo o frase motivacional con la potencia de Gemini Image Generation.</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                    <!-- Inputs -->
+                    <div class="lg:col-span-5 space-y-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Frase o Consejo para la Ilustración</label>
+                            <textarea id="card-prompt" rows="4" placeholder="Ej: Un camino rodeado de montañas al atardecer, representando la perseverancia y el progreso diario." class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-pink-500"></textarea>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Estilo Visual</label>
+                            <select id="card-style" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm text-slate-200">
+                                <option value="Digital art, vibrant color gradient, minimal landscape">Arte Digital Minimalista</option>
+                                <option value="Watercolor painting, soft pastel aesthetic">Acuarela Suave y Relajante</option>
+                                <option value="Cyberpunk neon synthwave art">Estilo Synthwave / Neón</option>
+                                <option value="Cinematic realistic 3d render, warm lighting">Render 3D Cinematográfico</option>
+                            </select>
+                        </div>
+
+                        <button onclick="generateImageCard()" id="btn-gen-card" class="w-full py-3.5 px-4 bg-gradient-to-r from-pink-500 to-rose-600 hover:from-pink-400 hover:to-rose-500 text-white font-bold rounded-xl shadow-lg shadow-pink-500/20 transition flex items-center justify-center space-x-2">
+                            <i class="fa-solid fa-paintbrush"></i>
+                            <span>Crear Ilustración</span>
+                        </button>
+                    </div>
+
+                    <!-- Image Display Area -->
+                    <div class="lg:col-span-7 flex flex-col justify-center items-center bg-slate-900/60 border border-slate-800 rounded-2xl min-h-[350px] p-4 relative">
+                        <div id="card-placeholder" class="text-center space-y-2 text-slate-500">
+                            <i class="fa-solid fa-wand-magic text-4xl mb-2 text-slate-600"></i>
+                            <p class="text-sm">Tu ilustración personalizada aparecerá aquí.</p>
+                        </div>
+
+                        <div id="card-loading" class="hidden flex flex-col items-center space-y-3">
+                            <div class="w-10 h-10 border-4 border-pink-500/20 border-t-pink-500 rounded-full animate-spin"></div>
+                            <p class="text-xs text-slate-400 animate-pulse">Generando tu imagen ilustrativa...</p>
+                        </div>
+
+                        <img id="card-result-img" class="hidden max-h-[450px] rounded-xl object-contain shadow-2xl border border-slate-700/50" alt="Tarjeta Inspiracional" />
+
+                        <div id="card-download-btn" class="hidden mt-4">
+                            <a id="card-download-link" download="consejo-inspiracional.png" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-lg transition inline-flex items-center space-x-2">
+                                <i class="fa-solid fa-download"></i>
+                                <span>Descargar Imagen</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== TAB 5: GUARDADOS Y DIARIO ==================== -->
+        <section id="tab-saved" class="tab-content hidden space-y-6">
+            <div class="glass-card rounded-2xl p-6 border border-slate-800 space-y-6">
+                <div class="flex items-center justify-between flex-wrap gap-4">
+                    <div>
+                        <h2 class="text-2xl font-bold text-white flex items-center space-x-2">
+                            <i class="fa-solid fa-bookmark text-yellow-500"></i>
+                            <span>Tus Consejos Guardados</span>
+                        </h2>
+                        <p class="text-slate-400 text-sm mt-1">Tu biblioteca personal de sabiduría para consultar cuando lo necesites.</p>
+                    </div>
+                    <button onclick="clearAllSaved()" class="text-xs px-3 py-2 bg-red-500/10 hover:bg-red-500/20 text-red-400 rounded-lg transition border border-red-500/20">
+                        <i class="fa-solid fa-trash-can mr-1"></i> Borrar Todo
+                    </button>
+                </div>
+
+                <div id="saved-list-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Populated dynamically via JS -->
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Modal: Daily Flash Advice -->
+    <div id="daily-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="glass-card rounded-3xl max-w-lg w-full p-6 sm:p-8 border border-slate-800 space-y-6 relative shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+            <button onclick="closeDailyTipModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <div class="text-center space-y-2">
+                <span class="px-3 py-1 bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-bold rounded-full inline-block">
+                    ⚡ Consejos Flash del Día
+                </span>
+                <h3 class="text-2xl font-bold text-white">Dosis Diaria de Claridad</h3>
+            </div>
+
+            <div id="daily-tip-content" class="bg-slate-900/90 rounded-2xl p-5 border border-slate-800 text-sm text-slate-200 leading-relaxed min-h-[120px] flex items-center justify-center text-center">
+                <i class="fa-solid fa-spinner animate-spin text-brand-400 text-xl"></i>
+            </div>
+
+            <div class="flex items-center space-x-3">
+                <button onclick="speakDailyTip()" class="flex-1 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium text-xs rounded-xl transition flex items-center justify-center space-x-2">
+                    <i class="fa-solid fa-volume-high"></i>
+                    <span>Escuchar</span>
+                </button>
+                <button onclick="openDailyTipModal()" class="flex-1 py-2.5 bg-brand-500 hover:bg-brand-400 text-slate-950 font-bold text-xs rounded-xl transition flex items-center justify-center space-x-2">
+                    <i class="fa-solid fa-rotate"></i>
+                    <span>Otro Consejo Flash</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration & State
+        const API_KEY = ""; // Dynamic runtime key provision
+        let currentAdviceData = null;
+        let savedAdviceList = JSON.parse(localStorage.getItem('conselia_saved') || '[]');
+        let activeCategory = 'Carrera';
+        let chatHistory = [];
+
+        // Categories Configuration
+        const CATEGORIES = [
+            { id: 'Carrera', name: 'Carrera & Trabajo', icon: 'fa-briefcase', color: 'text-blue-400' },
+            { id: 'Finanzas', name: 'Finanzas', icon: 'fa-wallet', color: 'text-emerald-400' },
+            { id: 'Bienestar', name: 'Salud & Mente', icon: 'fa-heart-pulse', color: 'text-rose-400' },
+            { id: 'Relaciones', name: 'Relaciones', icon: 'fa-users', color: 'text-purple-400' },
+            { id: 'Productividad', name: 'Hábitos & Enfoque', icon: 'fa-bolt', color: 'text-amber-400' },
+            { id: 'Estudios', name: 'Estudio & Futuro', icon: 'fa-graduation-cap', color: 'text-indigo-400' }
+        ];
+
+        window.onload = function() {
+            renderCategorySelector();
+            updateSavedCountBadge();
+            renderSavedAdviceList();
+        };
+
+        // Navigation Tab Switching
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('text-white', 'bg-slate-800');
+                btn.classList.add('text-slate-400');
+            });
+
+            const activeBtn = document.getElementById(`nav-${tabId}`);
+            if (activeBtn) {
+                activeBtn.classList.add('text-white', 'bg-slate-800');
+                activeBtn.classList.remove('text-slate-400');
+            }
+
+            // Close mobile menu if open
+            document.getElementById('mobile-menu').classList.add('hidden');
+        }
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        function renderCategorySelector() {
+            const container = document.getElementById('category-grid');
+            container.innerHTML = CATEGORIES.map(cat => `
+                <button onclick="selectCategory('${cat.id}')" id="cat-btn-${cat.id}" class="cat-btn border ${cat.id === activeCategory ? 'border-brand-500 bg-brand-500/10 text-white' : 'border-slate-800 bg-slate-900/60 text-slate-400 hover:border-slate-700'} p-3 rounded-xl flex flex-col items-center justify-center space-y-1.5 transition">
+                    <i class="fa-solid ${cat.icon} ${cat.color} text-lg"></i>
+                    <span class="text-xs font-medium text-center line-clamp-1">${cat.name}</span>
+                </button>
+            `).join('');
+        }
+
+        function selectCategory(catId) {
+            activeCategory = catId;
+            renderCategorySelector();
+        }
+
+        async function fetchGeminiAPI(payload, model = 'gemini-3-flash-preview') {
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${API_KEY}`;
+            
+            let attempts = 0;
+            const maxAttempts = 3;
+            let delay = 1000;
+
+            while (attempts < maxAttempts) {
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (response.status === 429) {
+                        attempts++;
+                        await new Promise(res => setTimeout(res, delay));
+                        delay *= 2;
+                        continue;
+                    }
+
+                    if (!response.ok) {
+                        throw new Error(`API error HTTP ${response.status}`);
+                    }
+
+                    return await response.json();
+                } catch (err) {
+                    attempts++;
+                    if (attempts >= maxAttempts) throw err;
+                    await new Promise(res => setTimeout(res, delay));
+                    delay *= 2;
+                }
+            }
+        }
+
+        async function generateAdvice() {
+            const situation = document.getElementById('user-situation').value.trim();
+            const tone = document.getElementById('advice-tone').value;
+
+            if (!situation) {
+                showToast('Por favor describe brevemente tu situación o inquietud.', 'warning');
+                return;
+            }
+
+            const outputContainer = document.getElementById('advice-output-container');
+            const loadingContainer = document.getElementById('advice-loading');
+            const actionsBar = document.getElementById('advice-actions');
+            const genBtn = document.getElementById('btn-generate-advice');
+
+            outputContainer.classList.add('hidden');
+            loadingContainer.classList.remove('hidden');
+            actionsBar.classList.add('hidden');
+            genBtn.disabled = true;
+
+            const systemPrompt = `Eres Conselia, una mentora y consejera experta de nivel mundial. Brindas asesoría práctica, profundamente sabia, accionable y estructurada. 
+Formatea tu respuesta de forma atractiva en Markdown usando los siguientes apartados:
+### 💡 Perspectiva Principal
+Un resumen directo y clarificador.
+
+### 🎯 Pasos de Acción
+1. **Paso 1:** Acción inmediata.
+2. **Paso 2:** Cambio estratégico.
+3. **Paso 3:** Enfoque a largo plazo.
+
+### ⚠️ Qué Evitar
+Un consejo preventivo sobre trampas o errores comunes.
+
+### 🌟 Frase de Recordatorio
+Una frase clave inspiradora.`;
+
+            const promptText = `Categoría: ${activeCategory}\nTono deseado: ${tone}\nSituación/Inquietud del usuario: "${situation}"`;
+
+            const payload = {
+                contents: [{ parts: [{ text: promptText }] }],
+                systemInstruction: { parts: [{ text: systemPrompt }] }
+            };
+
+            try {
+                const data = await fetchGeminiAPI(payload);
+                const replyText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+
+                if (replyText) {
+                    currentAdviceData = {
+                        id: Date.now(),
+                        category: activeCategory,
+                        situation: situation,
+                        text: replyText,
+                        date: new Date().toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' })
+                    };
+
+                    outputContainer.innerHTML = `<div class="text-left w-full prose prose-invert max-w-none text-slate-200 text-sm space-y-4 leading-relaxed">${marked.parse(replyText)}</div>`;
+                    actionsBar.classList.remove('hidden');
+                    updateBookmarkBtnState();
+                } else {
+                    outputContainer.innerHTML = `<p class="text-red-400">No se pudo generar el consejo. Inténtalo de nuevo.</p>`;
+                }
+            } catch (error) {
+                console.error(error);
+                outputContainer.innerHTML = `<p class="text-red-400">Hubo un contratiempo de conexión. Por favor reintenta.</p>`;
+                showToast('Error al conectar con el asistente de consejos.', 'error');
+            } finally {
+                loadingContainer.classList.add('hidden');
+                outputContainer.classList.remove('hidden');
+                genBtn.disabled = false;
+            }
+        }
+
+        async function sendChatMessage(e) {
+            e.preventDefault();
+            const input = document.getElementById('chat-input');
+            const message = input.value.trim();
+            if (!message) return;
+
+            const chatContainer = document.getElementById('chat-messages');
+
+            // Render User Message
+            chatContainer.innerHTML += `
+                <div class="flex items-start justify-end space-x-3">
+                    <div class="bg-brand-600 text-slate-950 font-medium rounded-2xl rounded-tr-none p-4 max-w-2xl text-sm shadow-md">
+                        <p>${escapeHtml(message)}</p>
+                    </div>
+                </div>
+            `;
+            input.value = '';
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+
+            // Prepare AI message placeholder
+            const aiMsgId = 'chat-reply-' + Date.now();
+            chatContainer.innerHTML += `
+                <div class="flex items-start space-x-3">
+                    <div class="w-8 h-8 rounded-full bg-accent-600 flex items-center justify-center text-white text-xs shrink-0">
+                        <i class="fa-solid fa-robot"></i>
+                    </div>
+                    <div id="${aiMsgId}" class="bg-slate-800/90 rounded-2xl rounded-tl-none p-4 max-w-2xl text-sm text-slate-200 border border-slate-700/50 shadow-sm flex items-center space-x-2">
+                        <i class="fa-solid fa-circle-notch animate-spin text-accent-400"></i>
+                        <span class="text-xs text-slate-400">Pensando respuesta...</span>
+                    </div>
+                </div>
+            `;
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+
+            chatHistory.push({ role: 'user', parts: [{ text: message }] });
+
+            const payload = {
+                contents: chatHistory,
+                systemInstruction: {
+                    parts: [{ text: "Eres un mentor comprensivo, sabio y empático. Das respuestas breves pero profundas y orientadas a la solución personal." }]
+                }
+            };
+
+            try {
+                const data = await fetchGeminiAPI(payload);
+                const replyText = data.candidates?.[0]?.content?.parts?.[0]?.text || "Lo siento, no pude procesar esa respuesta.";
+                
+                chatHistory.push({ role: 'model', parts: [{ text: replyText }] });
+
+                const msgEl = document.getElementById(aiMsgId);
+                if (msgEl) {
+                    msgEl.className = "bg-slate-800/90 rounded-2xl rounded-tl-none p-4 max-w-2xl text-sm text-slate-200 border border-slate-700/50 shadow-sm leading-relaxed";
+                    msgEl.innerHTML = marked.parse(replyText);
+                }
+            } catch (err) {
+                const msgEl = document.getElementById(aiMsgId);
+                if (msgEl) {
+                    msgEl.innerHTML = `<span class="text-red-400 text-xs">Error de conexión al responder.</span>`;
+                }
+            } finally {
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }
+        }
+
+        function clearChatHistory() {
+            chatHistory = [];
+            const chatContainer = document.getElementById('chat-messages');
+            chatContainer.innerHTML = `
+                <div class="flex items-start space-x-3">
+                    <div class="w-8 h-8 rounded-full bg-accent-600 flex items-center justify-center text-white text-xs shrink-0">
+                        <i class="fa-solid fa-robot"></i>
+                    </div>
+                    <div class="bg-slate-800/90 rounded-2xl rounded-tl-none p-4 max-w-2xl text-sm text-slate-200 border border-slate-700/50 shadow-sm">
+                        <p class="font-medium text-brand-400 mb-1">Conversación reiniciada.</p>
+                        <p>¿Sobre qué otra decisión o problema quieres conversar ahora?</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        async function evaluateDecisionMatrix() {
+            const opt1Title = document.getElementById('opt-1-title').value.trim() || 'Opción 1';
+            const opt1Pros = document.getElementById('opt-1-pros').value.trim();
+            const opt1Cons = document.getElementById('opt-1-cons').value.trim();
+
+            const opt2Title = document.getElementById('opt-2-title').value.trim() || 'Opción 2';
+            const opt2Pros = document.getElementById('opt-2-pros').value.trim();
+            const opt2Cons = document.getElementById('opt-2-cons').value.trim();
+
+            if (!opt1Pros && !opt2Pros) {
+                showToast('Por favor completa al menos las ventajas de tus opciones.', 'warning');
+                return;
+            }
+
+            const btn = document.getElementById('btn-eval-matrix');
+            const resultBox = document.getElementById('matrix-result');
+            const resultContainer = document.getElementById('matrix-result-content');
+
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i><span>Sopesando Alternativas...</span>`;
+
+            const promptText = `Evalúa estas opciones para una toma de decisión importante:
+
+Opción 1: ${opt1Title}
+Pros: ${opt1Pros}
+Contras: ${opt1Cons}
+
+Opción 2: ${opt2Title}
+Pros: ${opt2Pros}
+Contras: ${opt2Cons}
+
+Genera un análisis objetivo comparativo indicando cuál opción parece más sólida y sostenible a largo plazo, además de dar un veredicto sugerido en un tono constructivo.`;
+
+            const payload = {
+                contents: [{ parts: [{ text: promptText }] }],
+                systemInstruction: { parts: [{ text: "Eres un consultor analítico de alto nivel experto en toma de decisiones estratégicas." }] }
+            };
+
+            try {
+                const data = await fetchGeminiAPI(payload);
+                const replyText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+                
+                resultBox.classList.remove('hidden');
+                resultContainer.innerHTML = marked.parse(replyText || 'No se obtuvo evaluación.');
+            } catch (err) {
+                showToast('Error al procesar la evaluación.', 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `<i class="fa-solid fa-calculator"></i><span>Evaluar Dilema con IA</span>`;
+            }
+        }
+
+        async function generateImageCard() {
+            const promptInput = document.getElementById('card-prompt').value.trim();
+            const style = document.getElementById('card-style').value;
+
+            if (!promptInput) {
+                showToast('Ingresa un consejo o descripción para la ilustración.', 'warning');
+                return;
+            }
+
+            const placeholder = document.getElementById('card-placeholder');
+            const loading = document.getElementById('card-loading');
+            const imgEl = document.getElementById('card-result-img');
+            const downloadBtn = document.getElementById('card-download-btn');
+            const genBtn = document.getElementById('btn-gen-card');
+
+            placeholder.classList.add('hidden');
+            imgEl.classList.add('hidden');
+            downloadBtn.classList.add('hidden');
+            loading.classList.remove('hidden');
+            genBtn.disabled = true;
+
+            const fullPrompt = `${promptInput}. Visual style: ${style}, inspirational, high aesthetic quality.`;
+
+            const payload = {
+                contents: [{ parts: [{ text: fullPrompt }] }],
+                generationConfig: {
+                    responseModalities: ['IMAGE']
+                }
+            };
+
+            try {
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite-image:generateContent?key=${API_KEY}`;
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+                const base64Data = result?.candidates?.[0]?.content?.parts?.find(p => p.inlineData)?.inlineData?.data;
+
+                if (base64Data) {
+                    const imgUrl = `data:image/png;base64,${base64Data}`;
+                    imgEl.src = imgUrl;
+                    imgEl.classList.remove('hidden');
+
+                    const downloadLink = document.getElementById('card-download-link');
+                    downloadLink.href = imgUrl;
+                    downloadBtn.classList.remove('hidden');
+                } else {
+                    placeholder.innerHTML = `<p class="text-red-400 text-xs">No se pudo generar la imagen. Intenta con otra frase.</p>`;
+                    placeholder.classList.remove('hidden');
+                }
+            } catch (err) {
+                placeholder.innerHTML = `<p class="text-red-400 text-xs">Error de conexión al generar la imagen.</p>`;
+                placeholder.classList.remove('hidden');
+            } finally {
+                loading.classList.add('hidden');
+                genBtn.disabled = false;
+            }
+        }
+
+        async function openDailyTipModal() {
+            document.getElementById('daily-modal').classList.remove('hidden');
+            const container = document.getElementById('daily-tip-content');
+            container.innerHTML = `<i class="fa-solid fa-spinner animate-spin text-amber-400 text-xl"></i>`;
+
+            const promptText = "Dame un consejo breve, directo y sumamente poderoso de 2 frases para inspirar el día de hoy.";
+            const payload = {
+                contents: [{ parts: [{ text: promptText }] }],
+                systemInstruction: { parts: [{ text: "Eres un sabio estoico y dinámico." }] }
+            };
+
+            try {
+                const data = await fetchGeminiAPI(payload);
+                const tip = data.candidates?.[0]?.content?.parts?.[0]?.text || "Confía en tu proceso diario y toma pequeñas acciones constantes.";
+                container.innerHTML = `<p class="font-medium text-slate-100 text-base">"${escapeHtml(tip)}"</p>`;
+            } catch (err) {
+                container.innerHTML = `<p class="text-slate-300">"El único modo de hacer un gran trabajo es amar lo que haces."</p>`;
+            }
+        }
+
+        function closeDailyTipModal() {
+            document.getElementById('daily-modal').classList.add('hidden');
+        }
+
+        function speakAdvice() {
+            if (!currentAdviceData) return;
+            speakText(currentAdviceData.text.replace(/[#*`]/g, ''));
+        }
+
+        function speakDailyTip() {
+            const tipText = document.getElementById('daily-tip-content').innerText;
+            speakText(tipText);
+        }
+
+        function speakText(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'es-ES';
+                utterance.rate = 0.95;
+                window.speechSynthesis.speak(utterance);
+                showToast('Reproduciendo audio...', 'info');
+            } else {
+                showToast('Tu navegador no soporta síntesis de voz.', 'warning');
+            }
+        }
+
+        function saveCurrentAdvice() {
+            if (!currentAdviceData) return;
+
+            const existingIdx = savedAdviceList.findIndex(item => item.situation === currentAdviceData.situation);
+            if (existingIdx >= 0) {
+                savedAdviceList.splice(existingIdx, 1);
+                showToast('Consejo removido de guardados.', 'info');
+            } else {
+                savedAdviceList.unshift(currentAdviceData);
+                showToast('Consejo guardado en tu biblioteca.', 'success');
+            }
+
+            localStorage.setItem('conselia_saved', JSON.stringify(savedAdviceList));
+            updateBookmarkBtnState();
+            updateSavedCountBadge();
+            renderSavedAdviceList();
+        }
+
+        function updateBookmarkBtnState() {
+            const btn = document.getElementById('btn-bookmark');
+            if (!btn || !currentAdviceData) return;
+
+            const isSaved = savedAdviceList.some(item => item.situation === currentAdviceData.situation);
+            if (isSaved) {
+                btn.innerHTML = `<i class="fa-solid fa-bookmark text-yellow-400"></i>`;
+            } else {
+                btn.innerHTML = `<i class="fa-regular fa-bookmark"></i>`;
+            }
+        }
+
+        function updateSavedCountBadge() {
+            document.getElementById('saved-count').innerText = savedAdviceList.length;
+        }
+
+        function renderSavedAdviceList() {
+            const container = document.getElementById('saved-list-container');
+            if (!container) return;
+
+            if (savedAdviceList.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-2 text-center py-12 text-slate-500 space-y-2">
+                        <i class="fa-regular fa-bookmark text-3xl"></i>
+                        <p class="text-sm">Aún no has guardado ningún consejo.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = savedAdviceList.map(item => `
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-3 flex flex-col justify-between">
+                    <div class="space-y-2">
+                        <div class="flex items-center justify-between text-xs">
+                            <span class="px-2.5 py-0.5 rounded-full bg-slate-800 font-semibold text-brand-400">${escapeHtml(item.category)}</span>
+                            <span class="text-slate-500">${item.date}</span>
+                        </div>
+                        <h4 class="font-bold text-slate-200 text-sm line-clamp-1">"${escapeHtml(item.situation)}"</h4>
+                        <div class="text-xs text-slate-400 line-clamp-4 prose prose-invert">
+                            ${marked.parse(item.text)}
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-end space-x-2 border-t border-slate-800/80 pt-3">
+                        <button onclick="copySavedText('${item.id}')" class="text-xs text-slate-400 hover:text-white px-2 py-1 bg-slate-800 rounded-md">
+                            <i class="fa-solid fa-copy mr-1"></i> Copiar
+                        </button>
+                        <button onclick="deleteSavedItem('${item.id}')" class="text-xs text-red-400 hover:text-red-300 px-2 py-1 bg-red-500/10 rounded-md">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function deleteSavedItem(id) {
+            savedAdviceList = savedAdviceList.filter(item => item.id != id);
+            localStorage.setItem('conselia_saved', JSON.stringify(savedAdviceList));
+            updateSavedCountBadge();
+            renderSavedAdviceList();
+            updateBookmarkBtnState();
+            showToast('Eliminado de guardados.', 'info');
+        }
+
+        function clearAllSaved() {
+            if (savedAdviceList.length === 0) return;
+            savedAdviceList = [];
+            localStorage.setItem('conselia_saved', JSON.stringify([]));
+            updateSavedCountBadge();
+            renderSavedAdviceList();
+            updateBookmarkBtnState();
+            showToast('Todos los consejos fueron eliminados.', 'info');
+        }
+
+        function copyAdviceText() {
+            if (!currentAdviceData) return;
+            const textToCopy = currentAdviceData.text.replace(/[#*`]/g, '');
+            copyToClipboard(textToCopy);
+            showToast('Consejo copiado al portapapeles.', 'success');
+        }
+
+        function copySavedText(id) {
+            const item = savedAdviceList.find(x => x.id == id);
+            if (item) {
+                copyToClipboard(item.text.replace(/[#*`]/g, ''));
+                showToast('Consejo copiado.', 'success');
+            }
+        }
+
+        function copyToClipboard(str) {
+            const el = document.createElement('textarea');
+            el.value = str;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            return text.replace(/[&<>"']/g, function(m) {
+                return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m];
+            });
+        }
+
+        function showToast(msg, type = 'info') {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toast-msg');
+            const toastIcon = document.getElementById('toast-icon');
+
+            toastMsg.innerText = msg;
+
+            if (type === 'success') {
+                toastIcon.className = 'fa-solid fa-circle-check text-emerald-400 text-lg';
+            } else if (type === 'warning') {
+                toastIcon.className = 'fa-solid fa-triangle-exclamation text-amber-400 text-lg';
+            } else if (type === 'error') {
+                toastIcon.className = 'fa-solid fa-circle-xmark text-red-400 text-lg';
+            } else {
+                toastIcon.className = 'fa-solid fa-circle-info text-blue-400 text-lg';
+            }
+
+            toast.classList.remove('translate-y-20', 'opacity-0', 'pointer-events-none');
+
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0', 'pointer-events-none');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

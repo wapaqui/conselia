@@ -37,11 +37,12 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Marked.js for Rendering Markdown -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    
     <style>
         /* Custom scrollbars & smooth transitions */
         ::-webkit-scrollbar {
@@ -59,7 +60,7 @@
             background: #475569;
         }
         .glass-card {
-            background: rgba(30, 41, 59, 0.7);
+            background: rgba(30, 41, 59, 0.75);
             backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.08);
         }
@@ -68,16 +69,23 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
+        .animate-fade-in {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
     </style>
 </head>
 <body class="h-full flex flex-col font-sans bg-slate-950 text-slate-100 antialiased selection:bg-brand-500 selection:text-white">
 
     <!-- Top Navigation Bar -->
-    <header class="sticky top-0 z-40 border-b border-slate-800 bg-slate-900/80 backdrop-blur-md">
+    <header class="sticky top-0 z-40 border-b border-slate-800 bg-slate-900/90 backdrop-blur-md">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
             <!-- Brand Logo -->
-            <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('explore')">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-500 to-accent-600 flex items-center justify-center shadow-lg shadow-brand-500/20">
+            <div class="flex items-center space-x-3 cursor-pointer group" onclick="switchTab('explore')">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-500 to-accent-600 flex items-center justify-center shadow-lg shadow-brand-500/20 group-hover:scale-105 transition duration-300">
                     <i class="fa-solid fa-compass text-slate-950 text-xl"></i>
                 </div>
                 <div>
@@ -88,26 +96,26 @@
 
             <!-- Navigation Links -->
             <nav class="hidden md:flex items-center space-x-1">
-                <button onclick="switchTab('explore')" id="nav-explore" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium transition flex items-center space-x-2 text-white bg-slate-800">
+                <button onclick="switchTab('explore')" id="nav-explore" class="nav-btn px-4 py-2 rounded-xl text-sm font-medium transition flex items-center space-x-2 text-white bg-slate-800">
                     <i class="fa-solid fa-lightbulb text-amber-400"></i>
                     <span>Obtener Consejo</span>
                 </button>
-                <button onclick="switchTab('chat')" id="nav-chat" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/60 transition flex items-center space-x-2">
+                <button onclick="switchTab('chat')" id="nav-chat" class="nav-btn px-4 py-2 rounded-xl text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/60 transition flex items-center space-x-2">
                     <i class="fa-solid fa-comments text-accent-500"></i>
                     <span>Mentor Virtual</span>
                 </button>
-                <button onclick="switchTab('matrix')" id="nav-matrix" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/60 transition flex items-center space-x-2">
+                <button onclick="switchTab('matrix')" id="nav-matrix" class="nav-btn px-4 py-2 rounded-xl text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/60 transition flex items-center space-x-2">
                     <i class="fa-solid fa-scale-balanced text-emerald-400"></i>
                     <span>Matriz de Decisiones</span>
                 </button>
-                <button onclick="switchTab('card-gen')" id="nav-card-gen" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/60 transition flex items-center space-x-2">
+                <button onclick="switchTab('card-gen')" id="nav-card-gen" class="nav-btn px-4 py-2 rounded-xl text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/60 transition flex items-center space-x-2">
                     <i class="fa-solid fa-image text-pink-400"></i>
                     <span>Tarjeta Inspiracional</span>
                 </button>
-                <button onclick="switchTab('saved')" id="nav-saved" class="nav-btn px-4 py-2 rounded-lg text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/60 transition flex items-center space-x-2">
+                <button onclick="switchTab('saved')" id="nav-saved" class="nav-btn px-4 py-2 rounded-xl text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800/60 transition flex items-center space-x-2">
                     <i class="fa-solid fa-bookmark text-yellow-500"></i>
                     <span>Guardados</span>
-                    <span id="saved-count" class="ml-1 px-1.5 py-0.5 text-xs bg-slate-700 text-slate-300 rounded-full">0</span>
+                    <span id="saved-count" class="ml-1 px-2 py-0.5 text-xs bg-slate-800 text-brand-400 font-semibold rounded-full border border-slate-700">0</span>
                 </button>
             </nav>
 
@@ -123,30 +131,30 @@
                     <i class="fa-solid fa-bolt text-yellow-400 animate-pulse"></i>
                     <span class="hidden sm:inline">Consejo Flash</span>
                 </button>
-                <button onclick="toggleMobileMenu()" class="md:hidden p-2 text-slate-400 hover:text-white">
+                <button onclick="toggleMobileMenu()" aria-label="Abrir Menú" class="md:hidden p-2 text-slate-400 hover:text-white rounded-lg bg-slate-800/50">
                     <i class="fa-solid fa-bars text-xl"></i>
                 </button>
             </div>
         </div>
 
         <!-- Mobile Navigation Drawer -->
-        <div id="mobile-menu" class="hidden md:hidden border-t border-slate-800 bg-slate-900 px-4 pt-2 pb-4 space-y-2">
-            <button onclick="openSettingsModal()" class="w-full text-left px-3 py-2 rounded-lg text-brand-400 bg-brand-500/10 hover:bg-slate-800 flex items-center space-x-3 border border-brand-500/20">
+        <div id="mobile-menu" class="hidden md:hidden border-t border-slate-800 bg-slate-900 px-4 pt-2 pb-4 space-y-2 animate-fade-in">
+            <button onclick="openSettingsModal()" class="w-full text-left px-3 py-2.5 rounded-xl text-brand-400 bg-brand-500/10 hover:bg-slate-800 flex items-center space-x-3 border border-brand-500/20">
                 <i class="fa-solid fa-gear text-brand-400 w-5"></i><span class="font-semibold text-sm">Configurar API Key</span>
             </button>
-            <button onclick="switchTab('explore')" class="w-full text-left px-3 py-2 rounded-lg text-slate-200 hover:bg-slate-800 flex items-center space-x-3">
+            <button onclick="switchTab('explore')" class="w-full text-left px-3 py-2.5 rounded-xl text-slate-200 hover:bg-slate-800 flex items-center space-x-3">
                 <i class="fa-solid fa-lightbulb text-amber-400 w-5"></i><span>Obtener Consejo</span>
             </button>
-            <button onclick="switchTab('chat')" class="w-full text-left px-3 py-2 rounded-lg text-slate-200 hover:bg-slate-800 flex items-center space-x-3">
+            <button onclick="switchTab('chat')" class="w-full text-left px-3 py-2.5 rounded-xl text-slate-200 hover:bg-slate-800 flex items-center space-x-3">
                 <i class="fa-solid fa-comments text-accent-500 w-5"></i><span>Mentor Virtual</span>
             </button>
-            <button onclick="switchTab('matrix')" class="w-full text-left px-3 py-2 rounded-lg text-slate-200 hover:bg-slate-800 flex items-center space-x-3">
+            <button onclick="switchTab('matrix')" class="w-full text-left px-3 py-2.5 rounded-xl text-slate-200 hover:bg-slate-800 flex items-center space-x-3">
                 <i class="fa-solid fa-scale-balanced text-emerald-400 w-5"></i><span>Matriz de Decisiones</span>
             </button>
-            <button onclick="switchTab('card-gen')" class="w-full text-left px-3 py-2 rounded-lg text-slate-200 hover:bg-slate-800 flex items-center space-x-3">
+            <button onclick="switchTab('card-gen')" class="w-full text-left px-3 py-2.5 rounded-xl text-slate-200 hover:bg-slate-800 flex items-center space-x-3">
                 <i class="fa-solid fa-image text-pink-400 w-5"></i><span>Tarjeta Inspiracional</span>
             </button>
-            <button onclick="switchTab('saved')" class="w-full text-left px-3 py-2 rounded-lg text-slate-200 hover:bg-slate-800 flex items-center space-x-3">
+            <button onclick="switchTab('saved')" class="w-full text-left px-3 py-2.5 rounded-xl text-slate-200 hover:bg-slate-800 flex items-center space-x-3">
                 <i class="fa-solid fa-bookmark text-yellow-500 w-5"></i><span>Mis Consejos Guardados</span>
             </button>
         </div>
@@ -157,14 +165,14 @@
 
         <!-- Notification / Toast Bar -->
         <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
-            <div class="glass-card px-4 py-3 rounded-xl shadow-2xl flex items-center space-x-3 border-l-4 border-brand-500 text-sm font-medium">
+            <div class="glass-card px-4 py-3 rounded-xl shadow-2xl flex items-center space-x-3 border-l-4 border-brand-500 text-sm font-medium bg-slate-900/95">
                 <i id="toast-icon" class="fa-solid fa-circle-check text-brand-400 text-lg"></i>
                 <span id="toast-msg">Notificación</span>
             </div>
         </div>
 
         <!-- ==================== TAB 1: EXPLORADOR DE CONSEJOS ==================== -->
-        <section id="tab-explore" class="tab-content space-y-8">
+        <section id="tab-explore" class="tab-content space-y-8 animate-fade-in">
             <!-- Hero Banner -->
             <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 border border-slate-800 p-6 sm:p-10">
                 <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-brand-500/10 rounded-full blur-3xl pointer-events-none"></div>
@@ -201,6 +209,16 @@
                         </div>
                     </div>
 
+                    <!-- Preset Suggestions Chips -->
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Dilemas frecuentes (Haz clic para cargar)</label>
+                        <div class="flex flex-wrap gap-1.5" id="presets-container">
+                            <button onclick="loadPreset('Siento insatisfacción en mi trabajo actual y quiero emprender en digital.')" class="px-2.5 py-1 text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg border border-slate-700 transition">💼 Giro profesional</button>
+                            <button onclick="loadPreset('Tengo dificultad para organizar mi agenda diaria y me abruma la procrastinación.')" class="px-2.5 py-1 text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg border border-slate-700 transition">⚡ Productividad</button>
+                            <button onclick="loadPreset('Quiero mejorar mis hábitos de ahorro y reducir mis gastos hormiga este mes.')" class="px-2.5 py-1 text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg border border-slate-700 transition">💰 Finanzas</button>
+                        </div>
+                    </div>
+
                     <!-- Situation Input -->
                     <div>
                         <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Tu Situación o Pregunta</label>
@@ -220,7 +238,7 @@
                     </div>
 
                     <!-- Submit Button -->
-                    <button onclick="generateAdvice()" id="btn-generate-advice" class="w-full py-3.5 px-4 bg-gradient-to-r from-brand-600 to-brand-500 hover:from-brand-500 hover:to-brand-400 text-slate-950 font-bold rounded-xl shadow-lg shadow-brand-500/25 transition flex items-center justify-center space-x-2 group">
+                    <button onclick="generateAdvice()" id="btn-generate-advice" class="w-full py-3.5 px-4 bg-gradient-to-r from-brand-600 to-brand-500 hover:from-brand-500 hover:to-brand-400 text-slate-950 font-bold rounded-xl shadow-lg shadow-brand-500/25 transition flex items-center justify-center space-x-2 group cursor-pointer">
                         <i class="fa-solid fa-sparkles text-slate-950 group-hover:rotate-12 transition transform"></i>
                         <span>Generar Consejo Personalizado</span>
                     </button>
@@ -352,7 +370,7 @@
                 </div>
 
                 <div class="flex justify-center">
-                    <button onclick="evaluateDecisionMatrix()" id="btn-eval-matrix" class="px-8 py-3 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-slate-950 font-bold rounded-xl shadow-lg transition flex items-center space-x-2">
+                    <button onclick="evaluateDecisionMatrix()" id="btn-eval-matrix" class="px-8 py-3 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-slate-950 font-bold rounded-xl shadow-lg transition flex items-center space-x-2 cursor-pointer">
                         <i class="fa-solid fa-calculator"></i>
                         <span>Evaluar Dilema con IA</span>
                     </button>
@@ -398,7 +416,7 @@
                             </select>
                         </div>
 
-                        <button onclick="generateImageCard()" id="btn-gen-card" class="w-full py-3.5 px-4 bg-gradient-to-r from-pink-500 to-rose-600 hover:from-pink-400 hover:to-rose-500 text-white font-bold rounded-xl shadow-lg shadow-pink-500/20 transition flex items-center justify-center space-x-2">
+                        <button onclick="generateImageCard()" id="btn-gen-card" class="w-full py-3.5 px-4 bg-gradient-to-r from-pink-500 to-rose-600 hover:from-pink-400 hover:to-rose-500 text-white font-bold rounded-xl shadow-lg shadow-pink-500/20 transition flex items-center justify-center space-x-2 cursor-pointer">
                             <i class="fa-solid fa-paintbrush"></i>
                             <span>Crear Ilustración</span>
                         </button>
@@ -440,9 +458,32 @@
                         </h2>
                         <p class="text-slate-400 text-sm mt-1">Tu biblioteca personal de sabiduría para consultar cuando lo necesites.</p>
                     </div>
-                    <button onclick="clearAllSaved()" class="text-xs px-3 py-2 bg-red-500/10 hover:bg-red-500/20 text-red-400 rounded-lg transition border border-red-500/20">
-                        <i class="fa-solid fa-trash-can mr-1"></i> Borrar Todo
-                    </button>
+                    <div class="flex items-center space-x-2">
+                        <button onclick="exportSavedAdvice()" title="Descargar como TXT" class="text-xs px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl transition border border-slate-700 flex items-center space-x-1">
+                            <i class="fa-solid fa-file-export"></i>
+                            <span>Exportar</span>
+                        </button>
+                        <button onclick="clearAllSaved()" class="text-xs px-3 py-2 bg-red-500/10 hover:bg-red-500/20 text-red-400 rounded-xl transition border border-red-500/20">
+                            <i class="fa-solid fa-trash-can mr-1"></i> Borrar Todo
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Search and Filter Bar -->
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <div class="relative flex-1">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-500 text-sm"></i>
+                        <input type="text" id="saved-search" oninput="renderSavedAdviceList()" placeholder="Buscar en tus consejos guardados..." class="w-full bg-slate-900 border border-slate-800 rounded-xl pl-10 pr-4 py-2 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-brand-500">
+                    </div>
+                    <select id="saved-filter-cat" onchange="renderSavedAdviceList()" class="bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-300 focus:outline-none focus:border-brand-500">
+                        <option value="ALL">Todas las Categorías</option>
+                        <option value="Carrera">Carrera & Trabajo</option>
+                        <option value="Finanzas">Finanzas</option>
+                        <option value="Bienestar">Salud & Mente</option>
+                        <option value="Relaciones">Relaciones</option>
+                        <option value="Productividad">Hábitos & Enfoque</option>
+                        <option value="Estudios">Estudio & Futuro</option>
+                    </select>
                 </div>
 
                 <div id="saved-list-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -455,8 +496,8 @@
 
     <!-- Modal: Daily Flash Advice -->
     <div id="daily-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
-        <div class="glass-card rounded-3xl max-w-lg w-full p-6 sm:p-8 border border-slate-800 space-y-6 relative shadow-2xl animate-in fade-in zoom-in-95 duration-200">
-            <button onclick="closeDailyTipModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center">
+        <div class="glass-card rounded-3xl max-w-lg w-full p-6 sm:p-8 border border-slate-800 space-y-6 relative shadow-2xl animate-fade-in">
+            <button onclick="closeDailyTipModal()" aria-label="Cerrar Modal" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center">
                 <i class="fa-solid fa-xmark"></i>
             </button>
 
@@ -486,8 +527,8 @@
 
     <!-- Modal: API Key Settings -->
     <div id="settings-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
-        <div class="glass-card rounded-3xl max-w-md w-full p-6 border border-slate-800 space-y-5 relative shadow-2xl">
-            <button onclick="closeSettingsModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center">
+        <div class="glass-card rounded-3xl max-w-md w-full p-6 border border-slate-800 space-y-5 relative shadow-2xl animate-fade-in">
+            <button onclick="closeSettingsModal()" aria-label="Cerrar Ajustes" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center">
                 <i class="fa-solid fa-xmark"></i>
             </button>
 
@@ -497,21 +538,24 @@
                 </div>
                 <div>
                     <h3 class="text-lg font-bold text-white">Configuración de API Key</h3>
-                    <p class="text-xs text-slate-400">Para GitHub Pages o acceso directo</p>
+                    <p class="text-xs text-slate-400">Para GitHub Pages o acceso directo de cliente</p>
                 </div>
             </div>
 
             <p class="text-xs text-slate-300 leading-relaxed">
-                Ingresa tu clave API de Google Gemini para habilitar las respuestas en tiempo real. Tu clave se guardará únicamente en tu navegador.
+                Ingresa tu clave API de Google Gemini para habilitar las respuestas en tiempo real. Tu clave se guarda únicamente de forma local en tu navegador.
             </p>
 
             <div>
                 <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Gemini API Key</label>
                 <input type="password" id="api-key-input" placeholder="AIzaSy..." class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm text-slate-100 placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener" class="inline-block text-[11px] text-brand-400 hover:underline mt-1.5">
+                    <i class="fa-solid fa-arrow-up-right-from-square mr-1"></i> Obtener clave gratuita en Google AI Studio
+                </a>
             </div>
 
             <div class="flex space-x-2">
-                <button onclick="saveApiKey()" class="flex-1 py-3 bg-brand-500 hover:bg-brand-400 text-slate-950 font-bold text-xs rounded-xl transition">
+                <button onclick="saveApiKey()" class="flex-1 py-3 bg-brand-500 hover:bg-brand-400 text-slate-950 font-bold text-xs rounded-xl transition cursor-pointer">
                     Guardar Clave
                 </button>
                 <button onclick="clearApiKey()" class="py-3 px-4 bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs rounded-xl transition">
@@ -522,7 +566,7 @@
     </div>
 
     <script>
-        // Configuration & State
+        // Configuration & Application State
         let currentAdviceData = null;
         let savedAdviceList = JSON.parse(localStorage.getItem('conselia_saved') || '[]');
         let activeCategory = 'Carrera';
@@ -572,7 +616,7 @@
         function renderCategorySelector() {
             const container = document.getElementById('category-grid');
             container.innerHTML = CATEGORIES.map(cat => `
-                <button onclick="selectCategory('${cat.id}')" id="cat-btn-${cat.id}" class="cat-btn border ${cat.id === activeCategory ? 'border-brand-500 bg-brand-500/10 text-white' : 'border-slate-800 bg-slate-900/60 text-slate-400 hover:border-slate-700'} p-3 rounded-xl flex flex-col items-center justify-center space-y-1.5 transition">
+                <button onclick="selectCategory('${cat.id}')" id="cat-btn-${cat.id}" class="cat-btn border ${cat.id === activeCategory ? 'border-brand-500 bg-brand-500/10 text-white shadow-sm shadow-brand-500/10' : 'border-slate-800 bg-slate-900/60 text-slate-400 hover:border-slate-700'} p-3 rounded-xl flex flex-col items-center justify-center space-y-1.5 transition cursor-pointer">
                     <i class="fa-solid ${cat.icon} ${cat.color} text-lg"></i>
                     <span class="text-xs font-medium text-center line-clamp-1">${cat.name}</span>
                 </button>
@@ -582,6 +626,11 @@
         function selectCategory(catId) {
             activeCategory = catId;
             renderCategorySelector();
+        }
+
+        function loadPreset(text) {
+            document.getElementById('user-situation').value = text;
+            showToast('Caso sugerido cargado. Haz clic en Generar.', 'info');
         }
 
         async function fetchGeminiAPI(payload, model = 'gemini-3-flash-preview') {
@@ -633,7 +682,7 @@
 
             // Prompt user for API key if missing
             openSettingsModal();
-            throw new Error('Por favor ingresa tu API Key de Gemini en la configuración (⚙️) para continuar en GitHub Pages.');
+            throw new Error('Por favor ingresa tu API Key de Gemini en la configuración (⚙️) para continuar.');
         }
 
         function openSettingsModal() {
@@ -726,7 +775,7 @@ Una frase clave inspiradora.`;
             } catch (error) {
                 console.error(error);
                 outputContainer.innerHTML = `<p class="text-red-400">Hubo un contratiempo de conexión. Por favor reintenta.</p>`;
-                showToast('Error al conectar con el asistente de consejos.', 'error');
+                showToast(error.message || 'Error al conectar con el asistente de consejos.', 'error');
             } finally {
                 loadingContainer.classList.add('hidden');
                 outputContainer.classList.remove('hidden');
@@ -955,19 +1004,6 @@ Genera un análisis objetivo comparativo indicando cuál opción parece más só
             speakText(tipText);
         }
 
-        function speakText(text) {
-            if ('speechSynthesis' in window) {
-                window.speechSynthesis.cancel();
-                const utterance = new SpeechSynthesisUtterance(text);
-                utterance.lang = 'es-ES';
-                utterance.rate = 0.95;
-                window.speechSynthesis.speak(utterance);
-                showToast('Reproduciendo audio...', 'info');
-            } else {
-                showToast('Tu navegador no soporta síntesis de voz.', 'warning');
-            }
-        }
-
         function saveCurrentAdvice() {
             if (!currentAdviceData) return;
 
@@ -1006,18 +1042,27 @@ Genera un análisis objetivo comparativo indicando cuál opción parece más só
             const container = document.getElementById('saved-list-container');
             if (!container) return;
 
-            if (savedAdviceList.length === 0) {
+            const searchVal = (document.getElementById('saved-search')?.value || '').toLowerCase();
+            const filterCat = document.getElementById('saved-filter-cat')?.value || 'ALL';
+
+            const filtered = savedAdviceList.filter(item => {
+                const matchesCat = filterCat === 'ALL' || item.category === filterCat;
+                const matchesSearch = item.situation.toLowerCase().includes(searchVal) || item.text.toLowerCase().includes(searchVal);
+                return matchesCat && matchesSearch;
+            });
+
+            if (filtered.length === 0) {
                 container.innerHTML = `
-                    <div class="col-span-2 text-center py-12 text-slate-500 space-y-2">
+                    <div class="col-span-1 md:col-span-2 text-center py-12 text-slate-500 space-y-2 bg-slate-900/40 rounded-2xl border border-slate-800">
                         <i class="fa-regular fa-bookmark text-3xl"></i>
-                        <p class="text-sm">Aún no has guardado ningún consejo.</p>
+                        <p class="text-sm">No se encontraron consejos en esta búsqueda.</p>
                     </div>
                 `;
                 return;
             }
 
-            container.innerHTML = savedAdviceList.map(item => `
-                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-3 flex flex-col justify-between">
+            container.innerHTML = filtered.map(item => `
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-3 flex flex-col justify-between hover:border-slate-700 transition">
                     <div class="space-y-2">
                         <div class="flex items-center justify-between text-xs">
                             <span class="px-2.5 py-0.5 rounded-full bg-slate-800 font-semibold text-brand-400">${escapeHtml(item.category)}</span>
@@ -1029,15 +1074,36 @@ Genera un análisis objetivo comparativo indicando cuál opción parece más só
                         </div>
                     </div>
                     <div class="flex items-center justify-end space-x-2 border-t border-slate-800/80 pt-3">
-                        <button onclick="copySavedText('${item.id}')" class="text-xs text-slate-400 hover:text-white px-2 py-1 bg-slate-800 rounded-md">
+                        <button onclick="copySavedText('${item.id}')" class="text-xs text-slate-400 hover:text-white px-2.5 py-1 bg-slate-800 rounded-lg transition">
                             <i class="fa-solid fa-copy mr-1"></i> Copiar
                         </button>
-                        <button onclick="deleteSavedItem('${item.id}')" class="text-xs text-red-400 hover:text-red-300 px-2 py-1 bg-red-500/10 rounded-md">
+                        <button onclick="deleteSavedItem('${item.id}')" class="text-xs text-red-400 hover:text-red-300 px-2.5 py-1 bg-red-500/10 rounded-lg transition">
                             <i class="fa-solid fa-trash"></i>
                         </button>
                     </div>
                 </div>
             `).join('');
+        }
+
+        function exportSavedAdvice() {
+            if (savedAdviceList.length === 0) {
+                showToast('No tienes consejos guardados para exportar.', 'warning');
+                return;
+            }
+            let textOutput = `=== MI BIBLIOTECA CONSELIA ===\n\n`;
+            savedAdviceList.forEach((item, i) => {
+                textOutput += `[${i + 1}] Categoría: ${item.category} | Fecha: ${item.date}\n`;
+                textOutput += `Situación: ${item.situation}\n\n`;
+                textOutput += `${item.text.replace(/[#*`]/g, '')}\n`;
+                textOutput += `--------------------------------------------------\n\n`;
+            });
+
+            const blob = new Blob([textOutput], { type: 'text/plain;charset=utf-8' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `conselia-guardados-${Date.now()}.txt`;
+            link.click();
+            showToast('Archivo TXT descargado.', 'success');
         }
 
         function deleteSavedItem(id) {
@@ -1071,6 +1137,19 @@ Genera un análisis objetivo comparativo indicando cuál opción parece más só
             if (item) {
                 copyToClipboard(item.text.replace(/[#*`]/g, ''));
                 showToast('Consejo copiado.', 'success');
+            }
+        }
+
+        function speakText(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'es-ES';
+                utterance.rate = 0.95;
+                window.speechSynthesis.speak(utterance);
+                showToast('Reproduciendo audio...', 'info');
+            } else {
+                showToast('Tu navegador no soporta síntesis de voz.', 'warning');
             }
         }
 

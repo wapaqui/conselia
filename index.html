@@ -477,7 +477,6 @@
 
     <script>
         // Configuration & State
-        const API_KEY = ""; // Dynamic runtime key provision
         let currentAdviceData = null;
         let savedAdviceList = JSON.parse(localStorage.getItem('conselia_saved') || '[]');
         let activeCategory = 'Carrera';
@@ -540,7 +539,7 @@
         }
 
         async function fetchGeminiAPI(payload, model = 'gemini-3-flash-preview') {
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${API_KEY}`;
+            const apiUrl = `/.netlify/functions/gemini`;
             
             let attempts = 0;
             const maxAttempts = 3;
@@ -551,7 +550,7 @@
                     const response = await fetch(apiUrl, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
+                        body: JSON.stringify({ payload, model })
                     });
 
                     if (response.status === 429) {
@@ -810,15 +809,8 @@ Genera un análisis objetivo comparativo indicando cuál opción parece más só
             };
 
             try {
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite-image:generateContent?key=${API_KEY}`;
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-
-                const result = await response.json();
-                const base64Data = result?.candidates?.[0]?.content?.parts?.find(p => p.inlineData)?.inlineData?.data;
+                const data = await fetchGeminiAPI(payload, 'gemini-3.1-flash-lite-image');
+                const base64Data = data?.candidates?.[0]?.content?.parts?.find(p => p.inlineData)?.inlineData?.data;
 
                 if (base64Data) {
                     const imgUrl = `data:image/png;base64,${base64Data}`;

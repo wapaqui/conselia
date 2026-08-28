@@ -113,6 +113,9 @@
 
             <!-- Quick Action & Mobile Menu Toggle -->
             <div class="flex items-center space-x-3">
+                <button onclick="openSettingsModal()" title="Configuración de API Key" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition">
+                    <i class="fa-solid fa-gear"></i>
+                </button>
                 <button onclick="openDailyTipModal()" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-brand-500/10 border border-brand-500/30 text-brand-400 hover:bg-brand-500/20 transition flex items-center space-x-1.5">
                     <i class="fa-solid fa-bolt text-yellow-400 animate-pulse"></i>
                     <span class="hidden sm:inline">Consejo Flash</span>
@@ -125,6 +128,9 @@
 
         <!-- Mobile Navigation Drawer -->
         <div id="mobile-menu" class="hidden md:hidden border-t border-slate-800 bg-slate-900 px-4 pt-2 pb-4 space-y-2">
+            <button onclick="openSettingsModal()" class="w-full text-left px-3 py-2 rounded-lg text-slate-200 hover:bg-slate-800 flex items-center space-x-3">
+                <i class="fa-solid fa-gear text-slate-400 w-5"></i><span>Configurar API Key</span>
+            </button>
             <button onclick="switchTab('explore')" class="w-full text-left px-3 py-2 rounded-lg text-slate-200 hover:bg-slate-800 flex items-center space-x-3">
                 <i class="fa-solid fa-lightbulb text-amber-400 w-5"></i><span>Obtener Consejo</span>
             </button>
@@ -475,6 +481,43 @@
         </div>
     </div>
 
+    <!-- Modal: API Key Settings -->
+    <div id="settings-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="glass-card rounded-3xl max-w-md w-full p-6 border border-slate-800 space-y-5 relative shadow-2xl">
+            <button onclick="closeSettingsModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-slate-800 flex items-center justify-center text-brand-400">
+                    <i class="fa-solid fa-key text-lg"></i>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold text-white">Configuración de API Key</h3>
+                    <p class="text-xs text-slate-400">Para GitHub Pages o acceso directo</p>
+                </div>
+            </div>
+
+            <p class="text-xs text-slate-300 leading-relaxed">
+                Ingresa tu clave API de Google Gemini para habilitar las respuestas en tiempo real. Tu clave se guardará únicamente en tu navegador.
+            </p>
+
+            <div>
+                <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Gemini API Key</label>
+                <input type="password" id="api-key-input" placeholder="AIzaSy..." class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm text-slate-100 placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-brand-500">
+            </div>
+
+            <div class="flex space-x-2">
+                <button onclick="saveApiKey()" class="flex-1 py-3 bg-brand-500 hover:bg-brand-400 text-slate-950 font-bold text-xs rounded-xl transition">
+                    Guardar Clave
+                </button>
+                <button onclick="clearApiKey()" class="py-3 px-4 bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs rounded-xl transition">
+                    Borrar
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // Configuration & State
         let currentAdviceData = null;
@@ -539,11 +582,12 @@
         }
 
         async function fetchGeminiAPI(payload, model = 'gemini-3-flash-preview') {
-            const apiUrl = `/.netlify/functions/gemini`;
+            const userKey = localStorage.getItem('conselia_api_key');
             
+            // Try Netlify Serverless Function first if present
+            const apiUrl = `/.netlify/functions/gemini`;
             let attempts = 0;
-            const maxAttempts = 3;
-            let delay = 1000;
+            const maxAttempts = 2;
 
             while (attempts < maxAttempts) {
                 try {
@@ -553,25 +597,66 @@
                         body: JSON.stringify({ payload, model })
                     });
 
+                    if (response.ok) {
+                        return await response.json();
+                    }
                     if (response.status === 429) {
                         attempts++;
-                        await new Promise(res => setTimeout(res, delay));
-                        delay *= 2;
+                        await new Promise(res => setTimeout(res, 1000));
                         continue;
                     }
-
-                    if (!response.ok) {
-                        throw new Error(`API error HTTP ${response.status}`);
-                    }
-
-                    return await response.json();
+                    // If 404 (e.g. GitHub Pages static host) break and fallback
+                    break;
                 } catch (err) {
-                    attempts++;
-                    if (attempts >= maxAttempts) throw err;
-                    await new Promise(res => setTimeout(res, delay));
-                    delay *= 2;
+                    break;
                 }
             }
+
+            // Fallback: Direct API call if user configured an API key in the UI
+            if (userKey) {
+                const directUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${userKey}`;
+                const res = await fetch(directUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!res.ok) {
+                    const errData = await res.json().catch(() => ({}));
+                    throw new Error(errData.error?.message || `Error HTTP ${res.status}`);
+                }
+                return await res.json();
+            }
+
+            // Prompt user for API key if missing
+            openSettingsModal();
+            throw new Error('Por favor ingresa tu API Key de Gemini en la configuración (⚙️) para continuar en GitHub Pages.');
+        }
+
+        function openSettingsModal() {
+            document.getElementById('api-key-input').value = localStorage.getItem('conselia_api_key') || '';
+            document.getElementById('settings-modal').classList.remove('hidden');
+        }
+
+        function closeSettingsModal() {
+            document.getElementById('settings-modal').classList.add('hidden');
+        }
+
+        function saveApiKey() {
+            const key = document.getElementById('api-key-input').value.trim();
+            if (!key) {
+                showToast('Ingresa una API Key válida.', 'warning');
+                return;
+            }
+            localStorage.setItem('conselia_api_key', key);
+            closeSettingsModal();
+            showToast('API Key guardada correctamente.', 'success');
+        }
+
+        function clearApiKey() {
+            localStorage.removeItem('conselia_api_key');
+            document.getElementById('api-key-input').value = '';
+            showToast('API Key borrada.', 'info');
         }
 
         async function generateAdvice() {

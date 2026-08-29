@@ -121,7 +121,6 @@
 
             <!-- Quick Action & Mobile Menu Toggle -->
             <div class="flex items-center space-x-2 sm:space-x-3">
-                <!-- Botón de Configuración / Engranaje Destacado -->
                 <button onclick="openSettingsModal()" title="Configuración de API Key" class="px-3 py-1.5 rounded-xl bg-slate-800/90 hover:bg-slate-700 text-brand-400 hover:text-white transition flex items-center space-x-2 border border-brand-500/30 shadow-md group">
                     <i class="fa-solid fa-gear text-sm text-brand-400 group-hover:rotate-90 transition-transform duration-300"></i>
                     <span class="text-xs font-semibold text-slate-100">API Key</span>
@@ -131,6 +130,7 @@
                     <i class="fa-solid fa-bolt text-yellow-400 animate-pulse"></i>
                     <span class="hidden sm:inline">Consejo Flash</span>
                 </button>
+
                 <button onclick="toggleMobileMenu()" aria-label="Abrir Menú" class="md:hidden p-2 text-slate-400 hover:text-white rounded-lg bg-slate-800/50">
                     <i class="fa-solid fa-bars text-xl"></i>
                 </button>
@@ -156,6 +156,9 @@
             </button>
             <button onclick="switchTab('saved')" class="w-full text-left px-3 py-2.5 rounded-xl text-slate-200 hover:bg-slate-800 flex items-center space-x-3">
                 <i class="fa-solid fa-bookmark text-yellow-500 w-5"></i><span>Mis Consejos Guardados</span>
+            </button>
+            <button onclick="openLegalModal()" class="w-full text-left px-3 py-2.5 rounded-xl text-slate-400 hover:bg-slate-800 flex items-center space-x-3 border-t border-slate-800/80 pt-3">
+                <i class="fa-solid fa-shield-halved text-slate-400 w-5"></i><span class="text-xs">Aviso Legal & Términos</span>
             </button>
         </div>
     </header>
@@ -494,6 +497,31 @@
 
     </main>
 
+    <!-- Footer Banner with Legal Disclaimer -->
+    <footer class="mt-auto border-t border-slate-800 bg-slate-950/90 py-6 text-xs text-slate-400">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
+            <div class="space-y-1">
+                <div class="flex items-center justify-center md:justify-start space-x-2 text-slate-300">
+                    <i class="fa-solid fa-scale-balanced text-brand-400"></i>
+                    <span class="font-semibold">Conselia IA</span>
+                    <span>— Herramienta de Orientación e Inspiración Personal</span>
+                </div>
+                <p class="text-[11px] text-slate-500 max-w-2xl">
+                    <strong>Aviso Legal:</strong> Conselia ofrece sugerencias automatizadas con fines puramente informativos y de entretenimiento. No sustituye la atención o asesoramiento profesional especializado (médico, psicológico, legal o financiero).
+                </p>
+            </div>
+            <div class="flex items-center space-x-4 shrink-0">
+                <button onclick="openLegalModal()" class="text-brand-400 hover:text-brand-300 transition underline font-medium cursor-pointer flex items-center space-x-1">
+                    <i class="fa-solid fa-shield-halved text-xs"></i>
+                    <span>Deslinde y Términos Legales</span>
+                </button>
+                <button onclick="openSettingsModal()" class="hover:text-slate-200 transition underline cursor-pointer">
+                    API Key
+                </button>
+            </div>
+        </div>
+    </footer>
+
     <!-- Modal: Daily Flash Advice -->
     <div id="daily-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
         <div class="glass-card rounded-3xl max-w-lg w-full p-6 sm:p-8 border border-slate-800 space-y-6 relative shadow-2xl animate-fade-in">
@@ -560,6 +588,51 @@
                 </button>
                 <button onclick="clearApiKey()" class="py-3 px-4 bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs rounded-xl transition">
                     Borrar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Legal Terms & Disclaimer -->
+    <div id="legal-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="glass-card rounded-3xl max-w-2xl w-full p-6 sm:p-8 border border-slate-800 space-y-6 relative shadow-2xl animate-fade-in max-h-[85vh] flex flex-col">
+            <button onclick="closeLegalModal()" aria-label="Cerrar Aviso Legal" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <div class="flex items-center space-x-3 shrink-0 border-b border-slate-800 pb-4">
+                <div class="w-10 h-10 rounded-xl bg-brand-500/10 border border-brand-500/30 flex items-center justify-center text-brand-400">
+                    <i class="fa-solid fa-gavel text-lg"></i>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold text-white">Términos de Uso y Deslinde de Responsabilidad</h3>
+                    <p class="text-xs text-slate-400">Conselia — Guía e Inteligencia Artificial</p>
+                </div>
+            </div>
+
+            <div class="overflow-y-auto space-y-4 pr-2 text-xs text-slate-300 leading-relaxed">
+                <div class="p-3 bg-brand-500/10 border border-brand-500/20 rounded-xl text-brand-300">
+                    <strong>Aviso Corto:</strong> Conselia es una herramienta de orientación y entretenimiento basada en inteligencia artificial. El contenido proporcionado tiene fines puramente informativos e inspiracionales y no sustituye el consejo profesional médico, psicológico, legal o financiero.
+                </div>
+
+                <div class="space-y-3">
+                    <h4 class="font-bold text-slate-100 text-sm">1. Naturaleza del Servicio</h4>
+                    <p>Los consejos, matrices de decisión, textos e ilustraciones generados por esta plataforma corresponden a sugerencias automatizadas por modelos de lenguaje (IA) diseñadas para la reflexión y el desarrollo personal.</p>
+
+                    <h4 class="font-bold text-slate-100 text-sm">2. Ausencia de Relación Profesional</h4>
+                    <p>El uso de Conselia no establece una relación profesional-cliente (médico-paciente, psicólogo-paciente, abogado-cliente o asesor financiero-cliente). Si requieres asistencia especializada o te encuentras en una situación de crisis, te recomendamos consultar inmediatamente a un profesional colegiado o acudir a líneas de atención de emergencia.</p>
+
+                    <h4 class="font-bold text-slate-100 text-sm">3. Exención de Responsabilidad Civil</h4>
+                    <p>El desarrollador y los propietarios de Conselia no se hacen responsables de ninguna decisión tomada por el usuario, ni de pérdidas, daños, perjuicios o consecuencias directas o indirectas derivadas de la interpretación o aplicación de los consejos generados por la aplicación.</p>
+
+                    <h4 class="font-bold text-slate-100 text-sm">4. Responsabilidad del Usuario</h4>
+                    <p>Cada usuario es el único e íntegro responsable de evaluar la veracidad, idoneidad y riesgos de cualquier información antes de actuar en consecuencia.</p>
+                </div>
+            </div>
+
+            <div class="shrink-0 pt-2 flex justify-end">
+                <button onclick="closeLegalModal()" class="px-6 py-2.5 bg-brand-500 hover:bg-brand-400 text-slate-950 font-bold text-xs rounded-xl transition cursor-pointer">
+                    Entendido y Acepto
                 </button>
             </div>
         </div>
@@ -692,6 +765,14 @@
 
         function closeSettingsModal() {
             document.getElementById('settings-modal').classList.add('hidden');
+        }
+
+        function openLegalModal() {
+            document.getElementById('legal-modal').classList.remove('hidden');
+        }
+
+        function closeLegalModal() {
+            document.getElementById('legal-modal').classList.add('hidden');
         }
 
         function saveApiKey() {
